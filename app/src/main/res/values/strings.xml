@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Corona Finder</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="go">Go</string>
+    <string name="enter_verification_code">Enter Verification Code</string>
+    <string name="verify">Verify</string>
+</resources>
