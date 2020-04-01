@@ -2,29 +2,23 @@ package com.iimswiss.corona;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 public class MainActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private Context m_Context;
-    Comm comm= new Comm();
+    Comm comm = new Comm();
     TextView phone;
     TextView email;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,9 +26,18 @@ public class MainActivity extends AppCompatActivity {
         phone = findViewById(R.id.phone);
         email = findViewById(R.id.email);
         Button b = (Button) findViewById(R.id.butGo);
+        if(comm.ReadSettings("phone").equals("")) {
+            Intent intent = new Intent(MainActivity.this, FirstWorker.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        }
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+    comm.getLocation();
+
+
                 if (phone.getText().toString().isEmpty()) {
                     showMessage("Error!", "Please enter your valid phone number.");
                     return;
@@ -48,12 +51,13 @@ public class MainActivity extends AppCompatActivity {
                     showMessage("Invalid Email!", "Please enter a valid email to continue.");
                     return;
                 }
-                progressDialog = ProgressDialog.show(MainActivity.this , "Working!", "Please wait...");
+                progressDialog = ProgressDialog.show(MainActivity.this, "Working!", "Please wait...");
                 progressDialog.show();
                 RegisterStep1(phone.getText().toString(), email.getText().toString());
             }
         });
     }
+
     void showMessage(String title, String msg) {
         new android.app.AlertDialog.Builder(MainActivity.this)
                 .setTitle(title)
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
     void RegisterStep1(String strPhone, String strEmail) {
         WebApiCall call = new WebApiCall(m_Context);
         WebApiCall.Parameters p[] = new WebApiCall.Parameters[3];
@@ -84,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         p[2].setName("strPhone");
         p[2].setValue(strPhone);
 
-        HandleDownloadSettings listener = new HandleDownloadSettings();
+        HandlePostback listener = new HandlePostback();
         call.setMethodName("RegisterStep1");
         call.MakeCall(p);
         call.setOnPostExecuteListener(listener);
@@ -94,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private class HandleDownloadSettings implements WebApiCall.OnPostExecuteListener {
+    private class HandlePostback implements WebApiCall.OnPostExecuteListener {
 
         @Override
         public void OnPostExecute(WebApiCall.WebApiReturn webApiReturn) {
@@ -103,17 +108,18 @@ public class MainActivity extends AppCompatActivity {
             if (result.equals("f")) {
                 showMessage("Error!", webApiReturn.getStatus());
             } else if (result.equals("messageSent")) {
-                 Intent intent = new Intent(MainActivity.this   ,VerifyCode.class);
-                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                 intent.putExtra("phone",phone.getText().toString());
-                 intent.putExtra("email",email.getText().toString());
-                 startActivity(intent);
-            }
-            else if(result.equals("alreadyRegistered")){
-                showMessage("Success!","Oh! you are already registered. Lets go!");
-            }
-            else {
-                showMessage("Error!",result.split("\\*")[1]);
+                Intent intent = new Intent(MainActivity.this, VerifyCode.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("phone", phone.getText().toString());
+                intent.putExtra("email", email.getText().toString());
+                startActivity(intent);
+            } else if (result.equals("alreadyRegistered")) {
+                // showMessage("Success!","Oh! you are already registered. Lets go!");
+                Intent intent = new Intent(MainActivity.this, FirstWorker.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else {
+                showMessage("Error!", result.split("\\*")[1]);
             }
     /*        try {
                 JSONArray jArray = new JSONArray(result);

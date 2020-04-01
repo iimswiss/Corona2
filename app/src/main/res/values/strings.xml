@@ -5,4 +5,7 @@
     <string name="go">Go</string>
     <string name="enter_verification_code">Enter Verification Code</string>
     <string name="verify">Verify</string>
+    <string name="appInfo">You are a real hero. You are helping millions of Canadians by sharing your location to defeat COVID-19.</string>
+    <string name="allow">Allow</string>
+    <string name="opt_out">Opt Out</string>
 </resources>

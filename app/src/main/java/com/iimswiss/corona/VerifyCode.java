@@ -7,10 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class VerifyCode extends AppCompatActivity {
@@ -77,15 +75,13 @@ public class VerifyCode extends AppCompatActivity {
         p[3].setName("strVerificationCode");
         p[3].setValue(strVerificationCode);
 
-        HandleDownloadSettings listener = new HandleDownloadSettings();
+        HandlePostback listener = new HandlePostback();
         call.setMethodName("RegisterStep2");
         call.MakeCall(p);
         call.setOnPostExecuteListener(listener);
     }
 
-
-    private class HandleDownloadSettings implements WebApiCall.OnPostExecuteListener {
-
+    private class HandlePostback implements WebApiCall.OnPostExecuteListener {
         @Override
         public void OnPostExecute(WebApiCall.WebApiReturn webApiReturn) {
             progressDialog.dismiss();
@@ -93,7 +89,14 @@ public class VerifyCode extends AppCompatActivity {
             if (result.equals("f")) {
                 showMessage("Error!", webApiReturn.getStatus());
             } else if (result.equals("success")) {
-                showMessage("success", "you are being tracked");
+                Intent i = getIntent();
+                String phone = i.getExtras().getString("phone");
+                String email = i.getExtras().getString("email");
+                comm.SaveSettings("phone",phone);
+                comm.SaveSettings("email",email);
+                Intent intent = new Intent(VerifyCode.this, FirstWorker.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             } else {
                 showMessage("Error!", result.split("\\*")[1]);
             }
