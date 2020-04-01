@@ -46,6 +46,8 @@ public class FirstWorker extends AppCompatActivity {
                         Comm comm = new Comm();
                         comm.SaveSettings("phone","");
                         comm.SaveSettings("email","");
+                        Alarm alarm1 = new Alarm();
+                        alarm1.ClearAlarm(AppContext.getAppContext());
                         Intent intent = new Intent(FirstWorker.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);

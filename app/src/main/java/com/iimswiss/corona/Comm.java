@@ -12,6 +12,15 @@ import android.net.NetworkInfo;
 
 import androidx.core.app.ActivityCompat;
 
+import org.ksoap2.serialization.Marshal;
+import org.ksoap2.serialization.PropertyInfo;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.IOException;
+
 import static android.content.Context.LOCATION_SERVICE;
 import static java.util.UUID.randomUUID;
 
@@ -102,10 +111,22 @@ class Comm {
                     locationData.setFltLatitude(latitude);
                     locationData.setFltLongitude(longitude);
                     locationData.setFltSpeed(speed);
-                    //locationData.setIntLat(latitude);
+                    locationData.setIntLat(Math.round(latitude * 10000000));
+                    locationData.setIntLat(Math.round(latitude * 10000000));
                     locationData.setBlnDataOK(true);
                     return locationData;
                 } else {
+                    //remove dummy location
+//                    locationData.setFltAltitude(0);
+//                    locationData.setFltBearing(0);
+//                    locationData.setFltLatitude(47);
+//                    locationData.setFltLongitude(86);
+//                    locationData.setIntLat(47);
+//                    locationData.setIntLng(86);
+//
+//                    locationData.setFltSpeed(2);
+//                    //locationData.setIntLat(latitude);
+//                    locationData.setBlnDataOK(true);
                     locationData.setBlnDataOK(false);
                     return locationData;
                 }
@@ -122,7 +143,7 @@ class Comm {
 
     void SaveSettings(String strKey, String strValue) {
         SharedPreferences.Editor editor = AppContext.getAppContext().getSharedPreferences("CoronaFinderPrefs", Context.MODE_PRIVATE).edit();
-        editor.putString(strKey, strKey);
+        editor.putString(strKey, strValue);
         editor.apply();
     }
 
@@ -133,31 +154,41 @@ class Comm {
 
     void SendLocations() {
         String strPhone = ReadSettings("phone");
+        LocationData locationData = getLocation();
+        if (!locationData.isBlnDataOK()) {
+            return;
+        }
         WebApiCall call = new WebApiCall(m_Context);
-        WebApiCall.Parameters p[] = new WebApiCall.Parameters[4];
+        WebApiCall.Parameters p[] = new WebApiCall.Parameters[5];
 
         p[0] = new WebApiCall.Parameters();
         p[0].setDataType(WebApiCall.DataTypes._string);
         p[0].setName("strToken");
-        p[0].setValue(GetToken());
+        p[0].setValue(GetTokenFromPhoneNumber(strPhone));
 
         p[1] = new WebApiCall.Parameters();
-        p[1].setDataType(WebApiCall.DataTypes._string);
-        p[1].setName("strEmail");
-        // p[1].setValue(strEmail);
+        p[1].setDataType(WebApiCall.DataTypes._int);
+        p[1].setName("intLat");
+        p[1].setValue(locationData.getIntLat());
 
         p[2] = new WebApiCall.Parameters();
-        p[2].setDataType(WebApiCall.DataTypes._string);
-        p[2].setName("strPhone");
-        //    p[2].setValue(strPhone);
+        p[2].setDataType(WebApiCall.DataTypes._int);
+        p[2].setName("intLng");
+        p[2].setValue(locationData.getIntLng());
 
         p[3] = new WebApiCall.Parameters();
-        p[3].setDataType(WebApiCall.DataTypes._string);
-        p[3].setName("strVerificationCode");
-        //  p[3].setValue(strVerificationCode);
+        p[3].setDataType(WebApiCall.DataTypes._double);
+        p[3].setName("fltLat");
+        p[3].setValue(locationData.getFltLatitude());
+
+        p[4] = new WebApiCall.Parameters();
+        p[4].setDataType(WebApiCall.DataTypes._double);
+        p[4].setName("fltLng");
+        p[4].setValue(locationData.getFltLongitude());
+
 
         HandlePostBack listener = new HandlePostBack();
-        call.setMethodName("RegisterStep2");
+        call.setMethodName("UpdateLocation");
         call.MakeCall(p);
         call.setOnPostExecuteListener(listener);
     }
@@ -266,4 +297,5 @@ class Comm {
             this.intLng = intLng;
         }
     }
+
 }

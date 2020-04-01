@@ -19,9 +19,17 @@ public class Alarm extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         //sendLocation
         //Toast.makeText(context, "Alarm Called. Next alarm will be after 5 minutes.", Toast.LENGTH_LONG).show();
-        Log.d("myLog", "Called: " + i);
-        i++;
+        comm.SendLocations();
         SetAlarm(context);
+    }
+
+    public void ClearAlarm(Context context) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(context, Alarm.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        if(alarmManager != null){
+            alarmManager.cancel(pi);
+        }
     }
 
     public void SetAlarm(Context context) {

@@ -4,14 +4,22 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.Marshal;
+import org.ksoap2.serialization.MarshalBase64;
 import org.ksoap2.serialization.PropertyInfo;
+
 import android.os.AsyncTask;
 
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlSerializer;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.function.DoubleToLongFunction;
 
 public class WebApiCall {
     private String MethodName;
@@ -25,13 +33,14 @@ public class WebApiCall {
     void setMethodName(String methodName) {
         MethodName = methodName;
     }
+
     private Context m_Context;
 
     void MakeCall(Parameters[] params) {
         new CallWebAPI().execute(params);
     }
 
-    public WebApiCall(Context context) {
+    WebApiCall(Context context) {
         this.m_Context = context;
     }
 
@@ -72,22 +81,30 @@ public class WebApiCall {
                     if (param != null) {
                         PropertyInfo p = new PropertyInfo();
                         p.setName(param.getName());
-                        p.setValue(param.getValue());
                         switch (param.getDataType()) {
                             case DataTypes._int: {
                                 p.setType(int.class);
+                                p.setValue(param.getValue(0));
                                 break;
                             }
                             case DataTypes._date: {
                                 p.setType(Date.class);
+                                p.setValue(param.getValue(""));
                                 break;
                             }
                             case DataTypes._double: {
                                 p.setType(Double.class);
+                                p.setValue(param.getValue(0d));
+                                break;
+                            }
+                            case DataTypes._float: {
+                                p.setType(Float.class);
+                                p.setValue(param.getValue(0f));
                                 break;
                             }
                             default: {
                                 p.setType(String.class);
+                                p.setValue(param.getValue(""));
 
                             }
                         }
@@ -103,6 +120,7 @@ public class WebApiCall {
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.setOutputSoapObject(request);
             envelope.dotNet = true;
+            new MarshalDouble().register(envelope);
             try {
                 HttpTransportSE androidHttpTransport = new HttpTransportSE("https://corona.iimswiss.com/corona.asmx?wsdl");
                 try {
@@ -141,11 +159,12 @@ public class WebApiCall {
         final static String _int = "int";
         final static String _double = "double";
         final static String _date = "date";
+        final static String _float = "float";
     }
 
     static class Parameters {
         String Name;
-        String Value;
+        Object Value;
         String DataType;
 
         String getName() {
@@ -156,11 +175,35 @@ public class WebApiCall {
             Name = name;
         }
 
-        String getValue() {
-            return Value;
+        String getValue(String anyString) {
+            return String.valueOf(Value);
+        }
+
+        Double getValue(Double anyDouble) {
+            return Double.parseDouble(String.valueOf(Value));
+        }
+
+        Float getValue(Float anyFloat) {
+            return Float.parseFloat(String.valueOf(Value));
+        }
+
+        Integer getValue(int anyInt) {
+            return Integer.parseInt(String.valueOf(Value));
         }
 
         void setValue(String value) {
+            Value = value;
+        }
+
+        void setValue(Float value) {
+            Value = value;
+        }
+
+        void setValue(Double value) {
+            Value = value;
+        }
+
+        void setValue(int value) {
             Value = value;
         }
 
@@ -216,6 +259,7 @@ public class WebApiCall {
 
     }
 }
+
 abstract class _Context extends Context {
     Context context;
 
@@ -226,7 +270,30 @@ abstract class _Context extends Context {
             context = null;
         }
     }
+
     Context getContext() {
         return context;
     }
+}
+class MarshalDouble implements Marshal
+{
+
+
+    public Object readInstance(XmlPullParser parser, String namespace, String name,
+                               PropertyInfo expected) throws IOException, XmlPullParserException {
+
+        return Double.parseDouble(parser.nextText());
+    }
+
+
+    public void register(SoapSerializationEnvelope cm) {
+        cm.addMapping(cm.xsd, "double", Double.class, this);
+
+    }
+
+
+    public void writeInstance(XmlSerializer writer, Object obj) throws IOException {
+        writer.text(obj.toString());
+    }
+
 }

@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         phone = findViewById(R.id.phone);
         email = findViewById(R.id.email);
         Button b = (Button) findViewById(R.id.butGo);
-        if(comm.ReadSettings("phone").equals("")) {
+        String s = comm.ReadSettings("phone");
+        if(!comm.ReadSettings("phone").equals("")) {
             Intent intent = new Intent(MainActivity.this, FirstWorker.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -35,9 +36,6 @@ public class MainActivity extends AppCompatActivity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-    comm.getLocation();
-
-
                 if (phone.getText().toString().isEmpty()) {
                     showMessage("Error!", "Please enter your valid phone number.");
                     return;
@@ -117,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
                 // showMessage("Success!","Oh! you are already registered. Lets go!");
                 Intent intent = new Intent(MainActivity.this, FirstWorker.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                comm.SaveSettings("phone",phone.getText().toString());
+                comm.SaveSettings("email",email.getText().toString());
                 startActivity(intent);
             } else {
                 showMessage("Error!", result.split("\\*")[1]);
