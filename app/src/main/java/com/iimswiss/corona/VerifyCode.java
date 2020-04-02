@@ -95,7 +95,7 @@ public class VerifyCode extends AppCompatActivity {
                 comm.SaveSettings("phone",phone);
                 comm.SaveSettings("email",email);
                 Intent intent = new Intent(VerifyCode.this, FirstWorker.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
             } else {
                 showMessage("Error!", result.split("\\*")[1]);

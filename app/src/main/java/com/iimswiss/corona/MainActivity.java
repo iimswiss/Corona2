@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         String s = comm.ReadSettings("phone");
         if(!comm.ReadSettings("phone").equals("")) {
             Intent intent = new Intent(MainActivity.this, FirstWorker.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
             finish();
         }
@@ -107,14 +107,14 @@ public class MainActivity extends AppCompatActivity {
                 showMessage("Error!", webApiReturn.getStatus());
             } else if (result.equals("messageSent")) {
                 Intent intent = new Intent(MainActivity.this, VerifyCode.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent.putExtra("phone", phone.getText().toString());
                 intent.putExtra("email", email.getText().toString());
                 startActivity(intent);
             } else if (result.equals("alreadyRegistered")) {
                 // showMessage("Success!","Oh! you are already registered. Lets go!");
                 Intent intent = new Intent(MainActivity.this, FirstWorker.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 comm.SaveSettings("phone",phone.getText().toString());
                 comm.SaveSettings("email",email.getText().toString());
                 startActivity(intent);

@@ -26,14 +26,21 @@ public class FirstWorker extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_worker);
         int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 1;
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+        Logger logger = new Logger();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(FirstWorker.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(FirstWorker.this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-            }
-            else {
-                showMessage("Sorry!","We need location permission to continue.");
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    logger.WriteLog(8,"getting background locaiton permission");
+                    if (ContextCompat.checkSelfPermission(FirstWorker.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(FirstWorker.this,
+                                new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 1);
+                    }
+                }
+            } else {
+                showMessage("Sorry!", "We need location permission to continue.");
                 finish();
             }
         }
@@ -57,8 +64,8 @@ public class FirstWorker extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Comm comm = new Comm();
-                        comm.SaveSettings("phone","");
-                        comm.SaveSettings("email","");
+                        comm.SaveSettings("phone", "");
+                        comm.SaveSettings("email", "");
                         Alarm alarm1 = new Alarm();
                         alarm1.ClearAlarm(AppContext.getAppContext());
                         Intent intent = new Intent(FirstWorker.this, MainActivity.class);
