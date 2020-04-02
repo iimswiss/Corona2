@@ -6,6 +6,10 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,12 +29,6 @@ public class FirstWorker extends AppCompatActivity {
         checkPermissionsAndStartTracker();
         //https://stackoverflow.com/questions/12957645/setting-a-repeating-alarm-in-android
         //SetAlarm(FirstWorker.this);
-    }
-
-    private void StartTracker() {
-        //start location tracker here
-        Alarm alarm = new Alarm();
-        alarm.SetAlarm(FirstWorker.this);
         Button butOptOut = findViewById(R.id.butOptOut);
         butOptOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +58,13 @@ public class FirstWorker extends AppCompatActivity {
                 builder.show();
             }
         });
+    }
+
+    private void StartTracker() {
+        //start location tracker here
+        Alarm alarm = new Alarm();
+        alarm.SetAlarm(FirstWorker.this);
+
     }
 
     void showMessage(String title, String msg) {

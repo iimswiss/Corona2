@@ -1,6 +1,8 @@
 package com.iimswiss.corona;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +12,8 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class Alarm extends BroadcastReceiver {
     Comm comm = new Comm();
@@ -55,5 +59,4 @@ public class Alarm extends BroadcastReceiver {
            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300000, pi);
         }
     }
-
 }

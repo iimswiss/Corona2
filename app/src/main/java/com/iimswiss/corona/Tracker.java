@@ -27,7 +27,7 @@ public class Tracker extends Service {
         return START_STICKY;
     }
     private void showStickyNotification() {
-      /*  NotificationManager nMN = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager nMN = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification n  = new Notification.Builder(AppContext.getAppContext())
                 .setOngoing(true)
                 .setContentTitle("Monitoring")
@@ -37,15 +37,15 @@ public class Tracker extends Service {
         if(nMN != null)
         {
             try {
-                nMN.notify(2, n);
+                nMN.notify(2565632, n);
             } catch (Exception e) {
                 Logger  logger = new Logger();
                 logger.WriteLog(2004021703,"Error showing notification: " + e.getMessage());
             }
-        }*/
-        try {
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(this)
+        }
+       /* try {
+            Notification.Builder builder =
+                    new Notification.Builder(this)
                             .setSmallIcon(R.drawable.ic_launcher_background)
                             .setContentTitle("DC")
                             .setOngoing(true)
@@ -54,13 +54,15 @@ public class Tracker extends Service {
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.setContentIntent(contentIntent);
           //  builder.mNotification.flags = Notification.FLAG_ONGOING_EVENT;
+
             NotificationManager nManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
             if (nManager != null) {
                 nManager.notify(1710121223, builder.build());
             }
         } catch (Exception e) {
             Logger  logger = new Logger();
             logger.WriteLog(2004021703,"Error showing notification: " + e.getMessage());
-        }
+        }*/
     }
 }
