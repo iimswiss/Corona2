@@ -27,7 +27,6 @@ import static java.util.UUID.randomUUID;
 class Comm {
     private Context m_Context;
 
-
     /**
      * Use this function to resolve location locally if internet is not available. It returns nearest city to the current lat and long.
      * This function sets values of pd.locationInfo using lat and longs in pd.locationInfo
@@ -64,16 +63,20 @@ class Comm {
     }
 
     LocationData getLocation() {
+        Logger logger =new Logger();
+        logger.WriteLog(1,"entered into GetLocatoin");
         LocationData locationData = new LocationData();
         Context context = AppContext.getAppContext();
         if (!isGPSEnabled(context)) {
             //gps is not enabled
             locationData.setBlnDataOK(false);
+            logger.WriteLog(2004021245,"gps not enabled");
             return locationData;
         }
         final LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationData.setBlnDataOK(false);
+            logger.WriteLog(2004021246,"no permission");
             return locationData;
         }
         Location lastLocation;
@@ -102,7 +105,7 @@ class Comm {
 
                     float tempAngle = lastLocation.bearingTo(temp);
                     Log.d("temp ",String.valueOf(tempAngle));*/
-                    if (speed <= 1 || speed >= 8) {
+                    if (speed >= 8) {
                         locationData.setBlnDataOK(false);
                         return locationData;
                     }
@@ -112,7 +115,7 @@ class Comm {
                     locationData.setFltLongitude(longitude);
                     locationData.setFltSpeed(speed);
                     locationData.setIntLat(Math.round(latitude * 10000000));
-                    locationData.setIntLat(Math.round(latitude * 10000000));
+                    locationData.setIntLng(Math.round(latitude * 10000000));
                     locationData.setBlnDataOK(true);
                     return locationData;
                 } else {
@@ -131,6 +134,7 @@ class Comm {
                     return locationData;
                 }
             } catch (Exception e) {
+                logger.WriteLog(2004021247,e.getMessage());
                 locationData.setBlnDataOK(false);
                 return locationData;
             }

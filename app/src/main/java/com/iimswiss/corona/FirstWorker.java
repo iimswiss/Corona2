@@ -25,6 +25,19 @@ public class FirstWorker extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_worker);
+        int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 1;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            if (ContextCompat.checkSelfPermission(FirstWorker.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(FirstWorker.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+            }
+            else {
+                showMessage("Sorry!","We need location permission to continue.");
+                finish();
+            }
+        }
+
         //start location tracker here
         Alarm alarm = new Alarm();
         alarm.SetAlarm(FirstWorker.this);
@@ -33,14 +46,14 @@ public class FirstWorker extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(FirstWorker.this);
-                builder.setMessage("Opt out only if you are not a real hero. Tap on 'I am not a hero' to opt out.");
-                builder.setPositiveButton("I am a hero", new DialogInterface.OnClickListener() {
+                builder.setMessage("Opt out only if you do not want to help saving human beings. Tap on 'I am not helping' to opt out.");
+                builder.setPositiveButton("I want to help", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         showMessage("Thank You!", "We salute you.");
                     }
                 });
-                builder.setNegativeButton("I am not a hero", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("I am not helping", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Comm comm = new Comm();
