@@ -5,10 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,34 +14,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.Calendar;
-import java.util.Date;
-
 public class FirstWorker extends AppCompatActivity {
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    Logger logger = new Logger();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_worker);
         int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 1;
-        Logger logger = new Logger();
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(FirstWorker.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(FirstWorker.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    logger.WriteLog(8,"getting background locaiton permission");
-                    if (ContextCompat.checkSelfPermission(FirstWorker.this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(FirstWorker.this,
-                                new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 1);
-                    }
-                }
-            } else {
-                showMessage("Sorry!", "We need location permission to continue.");
-                finish();
-            }
-        }
+        checkPermissionsAndStartTracker();
+        //https://stackoverflow.com/questions/12957645/setting-a-repeating-alarm-in-android
+        //SetAlarm(FirstWorker.this);
+    }
 
+    private void StartTracker() {
         //start location tracker here
         Alarm alarm = new Alarm();
         alarm.SetAlarm(FirstWorker.this);
@@ -77,22 +60,6 @@ public class FirstWorker extends AppCompatActivity {
                 builder.show();
             }
         });
-        //https://stackoverflow.com/questions/12957645/setting-a-repeating-alarm-in-android
-        //SetAlarm(FirstWorker.this);
-
-//        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-//            int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 1;
-//            if (ContextCompat.checkSelfPermission(FirstWorker.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(FirstWorker.this,
-//                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                        MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-//            } else {
-//
-//                //startupProcess();
-//            }
-//        } else {
-//            //startupProcess();
-//        }
     }
 
     void showMessage(String title, String msg) {
@@ -105,6 +72,76 @@ public class FirstWorker extends AppCompatActivity {
                     }
                 })
                 .show();
+    }
+
+    void checkPermissionsAndStartTracker() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                logger.WriteLog(2004021541,"Os Version: " + android.os.Build.VERSION.SDK_INT + ". It requires custom message to get permission.");
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.title_permission)
+                        .setMessage(R.string.text_location_permission)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(FirstWorker.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                logger.WriteLog(2004021542,"Os Version: " + android.os.Build.VERSION.SDK_INT + ", no custom ui required.");
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+        }
+        else {
+            Intent serviceIntent = new Intent(FirstWorker.this  ,Tracker.class);
+            startService(serviceIntent);
+           // StartTracker();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        Intent serviceIntent = new Intent(FirstWorker.this  ,Tracker.class);
+                        startService(serviceIntent);
+                    }
+                    else {
+                        showMessage("Sorry!", "We cannot continue without location permission. (2004021547)");
+                    }
+                } else {
+                    showMessage("Sorry!", "We cannot continue without location permission.");
+                    finish();
+                }
+            }
+
+        }
     }
 
 }

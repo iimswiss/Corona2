@@ -62,15 +62,15 @@ class Comm {
         return locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    LocationData getLocation() {
+    private LocationData getLocation() {
         Logger logger =new Logger();
-        logger.WriteLog(1,"entered into GetLocatoin");
+     //   logger.WriteLog(1,"entered into GetLocatoin");
         LocationData locationData = new LocationData();
         Context context = AppContext.getAppContext();
         if (!isGPSEnabled(context)) {
             //gps is not enabled
             locationData.setBlnDataOK(false);
-            logger.WriteLog(2004021245,"gps not enabled");
+            logger.WriteLog(2004021245,"gps is not enabled");
             return locationData;
         }
         final LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -105,7 +105,7 @@ class Comm {
 
                     float tempAngle = lastLocation.bearingTo(temp);
                     Log.d("temp ",String.valueOf(tempAngle));*/
-                    if (speed >= 8) {
+                    if (speed >= 1 && speed <=8) {
                         locationData.setBlnDataOK(false);
                         return locationData;
                     }
@@ -115,7 +115,7 @@ class Comm {
                     locationData.setFltLongitude(longitude);
                     locationData.setFltSpeed(speed);
                     locationData.setIntLat(Math.round(latitude * 10000000));
-                    locationData.setIntLng(Math.round(latitude * 10000000));
+                    locationData.setIntLng(Math.round(longitude * 10000000));
                     locationData.setBlnDataOK(true);
                     return locationData;
                 } else {

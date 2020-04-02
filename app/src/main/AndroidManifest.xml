@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.iimswiss.corona.AppContext"
+        android:name=".AppContext"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,7 +17,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-     <receiver android:name=".Alarm" android:enabled="true"/>
+        <service
+            android:name=".Tracker"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <receiver
+            android:name=".Alarm"
+            android:enabled="true" />
+
         <service
             android:name=".Location"
             android:enabled="true"

@@ -52,9 +52,7 @@ public class Alarm extends BroadcastReceiver {
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
         if (alarmManager != null) {
             //reset alarm for next 5 minutes.
-            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), 1000 * 60 * 5, pi); // Millisec * Second * Minute
-            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), 5000, pi); // Millisec * Second * Minute
-            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, 5000, pi);
+           alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, 300000, pi);
         }
     }
 

@@ -8,4 +8,7 @@
     <string name="appInfo">You are a real hero. You are helping millions of Canadians by sharing your location to defeat COVID-19.</string>
     <string name="allow">Allow</string>
     <string name="opt_out">Opt Out</string>
+    <string name="title_permission">Permission Required</string>
+    <string name="text_location_permission">We need location permission to track your location, so that we could figure out if you were ever close to a COVID-19 infected person.</string>
+    <string name="ok">OK</string>
 </resources>
