@@ -120,16 +120,6 @@ class Comm {
                     return locationData;
                 } else {
                     //remove dummy location
-//                    locationData.setFltAltitude(0);
-//                    locationData.setFltBearing(0);
-//                    locationData.setFltLatitude(47);
-//                    locationData.setFltLongitude(86);
-//                    locationData.setIntLat(47);
-//                    locationData.setIntLng(86);
-//
-//                    locationData.setFltSpeed(2);
-//                    //locationData.setIntLat(latitude);
-//                    locationData.setBlnDataOK(true);
                     locationData.setBlnDataOK(false);
                     return locationData;
                 }

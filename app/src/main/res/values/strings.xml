@@ -11,4 +11,5 @@
     <string name="title_permission">Permission Required</string>
     <string name="text_location_permission">We need location permission to track your location, so that we could figure out if you were ever close to a COVID-19 infected person.</string>
     <string name="ok">OK</string>
+    <string name="channel_name">notification_chanel_232344</string>
 </resources>

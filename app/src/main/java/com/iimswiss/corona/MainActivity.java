@@ -118,23 +118,10 @@ public class MainActivity extends AppCompatActivity {
                 comm.SaveSettings("phone",phone.getText().toString());
                 comm.SaveSettings("email",email.getText().toString());
                 startActivity(intent);
+                finish();
             } else {
                 showMessage("Error!", result.split("\\*")[1]);
             }
-    /*        try {
-                JSONArray jArray = new JSONArray(result);
-                for (int i = 0; i < jArray.length(); i++) {
-                    JSONObject jObj = jArray.getJSONObject(i);
-                    if (jObj.has("error")) {
-
-                        return;
-                    }
-                }
-
-            } catch (Exception e) {
-
-            }*/
-
         }
 
     }
